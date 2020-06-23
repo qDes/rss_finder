@@ -15,19 +15,26 @@ Installation
 -----
 Install via pip:
 ```bash 
-pip install -U git+https://github.com/sgacode/rss_finder#egg=rss_finder
+pip install -U git+https://github.com/qDes/rss_finder.git#egg=rss_finder
 ```
 
 Usage
------
-Cli mode:
-```bash
-python3 cli.py https://www.rbc.ru/
-```
+
 
 Usage in code:\
 ```python
+import asyncio
+
 from rss_finder.finder import RssFinder
-finder = RssFinder()
-res = finder.search('aif.ru')
+
+
+async def main():
+    finder = RssFinder()
+
+    res = await finder.search('tadviser.ru/')
+    print(res)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
 ```
