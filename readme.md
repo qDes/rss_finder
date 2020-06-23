@@ -18,7 +18,7 @@ Install via pip:
 pip install -U git+https://github.com/qDes/rss_finder.git#egg=rss_finder
 ```
 
-Usage
+## Usage
 
 
 Usage in code:\
