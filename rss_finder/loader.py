@@ -2,6 +2,7 @@ import copy
 import signal
 from contextlib import contextmanager
 
+import aiohttp
 import requests
 
 from . import exceptions
@@ -40,9 +41,14 @@ class Loader:
         if requests_options and isinstance(requests_options, dict):
             self.requests_options.update(requests_options)
 
-    def fetch(self, url: str) -> requests.Response:
+    async def fetch(self, url: str) -> requests.Response:
         try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, ssl=False) as response:
+                    return await response.text()
+            '''
             with time_limit(self.timeout):
                 return requests.get(url, params=self.requests_options)
+            '''
         except (requests.RequestException, ConnectionError, UnicodeDecodeError, TimeoutException) as e:
             raise exceptions.RequestException('Error load url "{0}"'.format(url)) from e

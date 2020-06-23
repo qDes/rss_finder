@@ -57,13 +57,13 @@ class RssFinder:
     def __init__(self, requests_options=None, loader_timeout=None):
         self.loader = Loader(requests_options, timeout=loader_timeout)
 
-    def search(self, url: str, max_results=None) -> typing.List[str]:
+    async def search(self, url: str, max_results=None) -> typing.List[str]:
         url = self.normalize_url(url)
         log(url, 'Start process url')
 
         # fetch url content
         try:
-            r = self.loader.fetch(url)
+            r = await self.loader.fetch(url)
         except exceptions.RequestException as e:
             log(str(e), url, level=logging.ERROR)
             return []
@@ -72,9 +72,9 @@ class RssFinder:
 
         # try parse from html & validate urls
         log(url, 'Start parse from html')
-        res = self.parse_from_html(r.text, url)
+        res = self.parse_from_html(r, url)
         res = [self.normalize_url(res_url, main_url=url) for res_url in res]
-        res = [url for url in res if self.validate_rss_url(url)]
+        res = [url for url in res if await self.validate_rss_url(url)]
         if res and (not max_results or len(res) >= max_results):
             log(url, 'End parse from html => finish, results count: {0}'.format(len(res)))
             return res
@@ -86,7 +86,7 @@ class RssFinder:
             cur_url = self.normalize_url('/' + cur_url, main_url=url)
             log(url, 'Try common url {0}'.format(cur_url))
 
-            if self.validate_rss_url(cur_url):
+            if await self.validate_rss_url(cur_url):
                 res.append(cur_url)
 
             if max_results and len(res) >= max_results:
@@ -124,17 +124,17 @@ class RssFinder:
 
         return res
 
-    def validate_rss_url(self, url: str) -> bool:
+    async def validate_rss_url(self, url: str) -> bool:
         try:
-            r = self.loader.fetch(url)
+            r = await self.loader.fetch(url)
         except exceptions.RequestException as e:
             log(str(e), url, level=logging.ERROR)
             return False
 
-        if r.status_code != 200 or not len(r.text):
+        if not len(r):
             return False
 
-        f = feedparser.parse(r.text)
+        f = feedparser.parse(r)
         if not len(f.entries):
             return False
         return True
