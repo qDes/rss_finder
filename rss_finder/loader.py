@@ -1,6 +1,7 @@
 import copy
 import signal
 from contextlib import contextmanager
+from async_timeout import timeout
 
 import aiohttp
 import requests
@@ -43,14 +44,17 @@ class Loader:
 
     async def fetch(self, url: str) -> requests.Response:
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, ssl=False) as response:
-                    status = response.status
-                    text = await response.text()
-                    return text, status
+            async with timeout(self.timeout):
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, ssl=False) as response:
+                        status = response.status
+                        text = await response.text()
+                        return text, status
             '''
             with time_limit(self.timeout):
                 return requests.get(url, params=self.requests_options)
             '''
-        except (requests.RequestException, ConnectionError, UnicodeDecodeError, TimeoutException) as e:
+        except (requests.RequestException, ConnectionError,
+                UnicodeDecodeError, TimeoutException,
+                asyncio.TimeoutError) as e:
             raise exceptions.RequestException('Error load url "{0}"'.format(url)) from e
