@@ -57,5 +57,6 @@ class Loader:
             '''
         except (requests.RequestException, ConnectionError,
                 UnicodeDecodeError, TimeoutException,
-                asyncio.TimeoutError) as e:
+                asyncio.TimeoutError,
+                aiohttp.client_exceptions.ClientOSError) as e:
             raise exceptions.RequestException('Error load url "{0}"'.format(url)) from e
