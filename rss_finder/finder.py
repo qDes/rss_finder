@@ -63,7 +63,7 @@ class RssFinder:
 
         # fetch url content
         try:
-            r = await self.loader.fetch(url)
+            r, _ = await self.loader.fetch(url)
         except exceptions.RequestException as e:
             log(str(e), url, level=logging.ERROR)
             return []
@@ -126,12 +126,12 @@ class RssFinder:
 
     async def validate_rss_url(self, url: str) -> bool:
         try:
-            r = await self.loader.fetch(url)
+            r, status_code = await self.loader.fetch(url)
         except exceptions.RequestException as e:
             log(str(e), url, level=logging.ERROR)
             return False
-
-        if not len(r):
+        
+        if status_code != 200 and not len(r):
             return False
 
         f = feedparser.parse(r)

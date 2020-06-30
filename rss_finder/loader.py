@@ -45,7 +45,9 @@ class Loader:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, ssl=False) as response:
-                    return await response.text()
+                    status = response.status
+                    text = await response.text()
+                    return text, status
             '''
             with time_limit(self.timeout):
                 return requests.get(url, params=self.requests_options)
