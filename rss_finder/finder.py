@@ -2,7 +2,7 @@ import typing
 import logging
 
 import feedparser
-import urltools
+from . import urltools
 from lxml.html import fromstring
 from lxml import etree
 

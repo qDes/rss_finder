@@ -2,4 +2,3 @@ aiohttp==3.6.2
 requests
 lxml
 feedparser>=5.1.2
-urltools
