@@ -12,8 +12,11 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 # parse_requirements() returns generator of pip.req.InstallRequirement objects
 cur_dir = os.path.abspath(os.path.dirname(__file__))
 install_reqs = parse_requirements(os.path.join(cur_dir, 'requirements.txt'), session=False)
-reqs = [str(ir.req) for ir in install_reqs]
-
+try:
+    reqs = [str(ir.req) for ir in install_reqs]
+except:
+    reqs = [str(ir.requirement) for ir in install_reqs]
+    
 setup(
     name='rss_finder',
     version='1.0',

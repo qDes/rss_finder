@@ -111,7 +111,10 @@ class RssFinder:
         # parse <link> tags
         for mime in self.rss_mime:
             for link_tag in dom.xpath('.//link[@type="{0}"]'.format(mime)):
-                res.append(link_tag.attrib['href'])
+                try:
+                    res.append(link_tag.attrib['href'])
+                except KeyError:
+                    continue
         if res:
             return res
 
@@ -120,7 +123,10 @@ class RssFinder:
             ['contains(@href, "{0}")'.format(label) for label in self.rss_url_labels]
         )
         for link_tag in dom.xpath('.//a[{0}]'.format(contains_xpath)):
-            res.append(link_tag.attrib['href'])
+            try:
+                res.append(link_tag.attrib['href'])
+            except KeyError:
+                continue
 
         return res
 
