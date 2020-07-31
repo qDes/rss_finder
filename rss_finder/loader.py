@@ -59,5 +59,6 @@ class Loader:
                 UnicodeDecodeError, TimeoutException,
                 asyncio.TimeoutError, UnicodeError,
                 aiohttp.client_exceptions.ClientOSError,
-                concurrent.futures._base.CancelledError) as e:
+                concurrent.futures._base.CancelledError,
+                ValuerError) as e:
             raise exceptions.RequestException('Error load url "{0}"'.format(url)) from e
