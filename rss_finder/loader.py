@@ -6,7 +6,7 @@ from async_timeout import timeout
 
 import aiohttp
 import requests
-
+import concurrent
 from . import exceptions
 
 
@@ -58,5 +58,6 @@ class Loader:
         except (requests.RequestException, ConnectionError,
                 UnicodeDecodeError, TimeoutException,
                 asyncio.TimeoutError, UnicodeError,
-                aiohttp.client_exceptions.ClientOSError) as e:
+                aiohttp.client_exceptions.ClientOSError,
+                concurrent.futures._base.CancelledError) as e:
             raise exceptions.RequestException('Error load url "{0}"'.format(url)) from e
